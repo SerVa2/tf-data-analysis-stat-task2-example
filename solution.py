@@ -6,14 +6,20 @@ from scipy.stats import chi2
 chat_id = 1633714108 # Ваш chat ID, не меняйте название переменной
 
 def solution(p: float, x: np.array) -> tuple:
-    # Измените код этой функции
-    # Это будет вашим решением
-    # Не меняйте название функции и её аргументы
+    # Определяем уровень значимости
     alpha = 1 - p
-    n = len(x)
-    s2 = np.var(x)
-    chi2_left = chi2.ppf(alpha / 2, df=n-1)
-    chi2_right = chi2.ppf(1 - alpha / 2, df=n-1)
-    left = np.sqrt((n-1)*s2/chi2_right)
-    right = np.sqrt((n-1)*s2/chi2_left)
-    return left, right
+    
+    # Определяем степень свободы
+    df = len(x) - 1
+    
+    # Определяем квантиль распределения хи-квадрат со степенью свободы df 
+    chi2_1 = chi2.ppf(1 - alpha/2, df)
+    chi2_2 = chi2.ppf(alpha/2, df)
+    
+    # Определяем оценку для sigma
+    var = np.sum(x**2) / (len(x) * 49) # Несмещенная оценка дисперсии
+    sigma_1 = np.sqrt(var * df / chi2_1)
+    sigma_2 = np.sqrt(var * df / chi2_2)
+    
+    # Возвращаем интервал
+    return (sigma_1, sigma_2)
